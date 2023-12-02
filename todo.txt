@@ -1,0 +1,3 @@
+- [] work with full camunication
+- [] update list when in `waiting room`
+- [] when master press start, move to next page (with all users)

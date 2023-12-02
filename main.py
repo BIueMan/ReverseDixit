@@ -19,25 +19,29 @@ async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
-@app.post("/", response_class=HTMLResponse)
+@app.post("/waiting-room", response_class=HTMLResponse)
 async def create_user(request: Request, username: str = Form(...)):
-    # Check if user exists (in a real app, you would perform database queries here)
+    # Check if user exists
     if not is_user_exists(username):
-        # Redirect to page 2
-        return templates.TemplateResponse("page2.html", {"request": request, "username": username})
+        # Redirect to waiting lobby
+        return templates.TemplateResponse("waiting_lobby.html", {"request": request, "username": username, "users": [key for key in USER_DICT.keys()]})
     else:
-        # User already exists, handle accordingly (e.g., show an error message)
+        # User already exists, handle accordingly
         return templates.TemplateResponse("login.html", {"request": request, "error_message": "User already exists"})
+
+@app.post("/enter-prompt-init", response_class=HTMLResponse)
+async def enter_prompt_init(request: Request, username: str = Form(...)):
+    return templates.TemplateResponse("enter_prompt_init.html", {"request": request, "username": username})
 
 
 # Page 2: Send Text
-@app.post("/send-text", response_class=HTMLResponse)
+@app.post("/waiting_ai", response_class=HTMLResponse)
 async def send_text(request: Request, username: str = Form(...), text: str = Form(...)):
     # Process the text (in a real app, you might save it to a database, etc.)
     processed_text = process_text(username, text)
 
     # Display the processed text along with the username
-    return templates.TemplateResponse("result.html", {"request": request, "username": username, "processed_text": processed_text})
+    return templates.TemplateResponse("waiting_ai.html", {"request": request, "username": username, "processed_text": processed_text})
 
 
 USER_DICT = {}
@@ -46,7 +50,7 @@ def is_user_exists(username: str):
     username = username.strip()
     
     def append_user(username):
-        USER_DICT[username] = ["", ""]
+        USER_DICT[username] = {"global_prompt": "", "current_prompt": ""}
         print(f"***** User added - {print_colors['yellow']}{username}{print_colors['reset']} *****")
         return False
     
@@ -58,6 +62,6 @@ def is_user_exists(username: str):
 
 
 def process_text(username: str, text: str):
-    USER_DICT[username] = text
+    USER_DICT[username]["global_prompt"] = text
     print(f"***** {print_colors['yellow']}{username}{print_colors['reset']} added new prompt was given - {print_colors['yellow']}{text}{print_colors['reset']} *****")
     return f"Processed Text: {text}"
