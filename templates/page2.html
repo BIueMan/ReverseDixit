@@ -10,6 +10,8 @@
     <form method="post" action="/send-text">
         <label for="text">Text:</label>
         <input type="text" name="text" required>
+        <!-- Include the username field in the form -->
+        <input type="hidden" name="username" value="{{ username }}">
         <button type="submit">Send</button>
     </form>
 </body>

@@ -32,12 +32,12 @@ async def create_user(request: Request, username: str = Form(...)):
 
 # Page 2: Send Text
 @app.post("/send-text", response_class=HTMLResponse)
-async def send_text(request: Request, text: str = Form(...)):
+async def send_text(request: Request, username: str = Form(...), text: str = Form(...)):
     # Process the text (in a real app, you might save it to a database, etc.)
     processed_text = process_text(text)
 
-    # Display the processed text
-    return templates.TemplateResponse("result.html", {"request": request, "processed_text": processed_text})
+    # Display the processed text along with the username
+    return templates.TemplateResponse("result.html", {"request": request, "username": username, "processed_text": processed_text})
 
 
 user_dict = {}
