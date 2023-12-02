@@ -34,19 +34,19 @@ async def create_user(request: Request, username: str = Form(...)):
 @app.post("/send-text", response_class=HTMLResponse)
 async def send_text(request: Request, username: str = Form(...), text: str = Form(...)):
     # Process the text (in a real app, you might save it to a database, etc.)
-    processed_text = process_text(text)
+    processed_text = process_text(username, text)
 
     # Display the processed text along with the username
     return templates.TemplateResponse("result.html", {"request": request, "username": username, "processed_text": processed_text})
 
 
-user_dict = {}
+USER_DICT = {}
 # Dummy functions for simulating database queries
 def is_user_exists(username: str):
     username = username.strip()
     
     def append_user(username):
-        user_dict[username] = ["", ""]
+        USER_DICT[username] = ["", ""]
         print(f"***** User added - {print_colors['yellow']}{username}{print_colors['reset']} *****")
         return False
     
@@ -54,10 +54,10 @@ def is_user_exists(username: str):
         print(f"***** {print_colors['red']}MINOR-ERROR:{print_colors['reset']} User exists - {print_colors['yellow']}{username}{print_colors['reset']} *****")
         return True
     
-    return append_user(username) if username not in user_dict else error_message(username)
+    return append_user(username) if username not in USER_DICT else error_message(username)
 
 
-def process_text(text: str):
-    username = 'todo add user to function'
+def process_text(username: str, text: str):
+    USER_DICT[username] = text
     print(f"***** {print_colors['yellow']}{username}{print_colors['reset']} added new prompt was given - {print_colors['yellow']}{text}{print_colors['reset']} *****")
     return f"Processed Text: {text}"
